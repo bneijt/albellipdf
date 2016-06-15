@@ -8,6 +8,7 @@ import System.FilePath ((</>), takeDirectory)
 import Control.Concurrent (threadDelay)
 import System.Process (callCommand)
 import System.Random (getStdRandom, randomR)
+import System.IO (hFlush, stdout, hSetBuffering, BufferMode(NoBuffering))
 import Decrypt
 
 
@@ -43,9 +44,9 @@ randomOrderPdfName =  do
     number <- getStdRandom (randomR (1, 9999)) :: IO Int
     return ("order_" ++ show number ++ ".pdf")
 
-
 findAndKill :: IO()
 findAndKill = do
+    hSetBuffering stdout NoBuffering
     print "Polling for order file..."
     orderFilePath <- pollForOrderFile
     print "Waiting for packaging stage"
