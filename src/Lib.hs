@@ -17,6 +17,7 @@ findOrderFilesBelow basePath = do
     candidateDirectories <- getDirectoryContents basePath
     -- Version 10.0.0.1189 uses ORDER.$$$
     ca <- findFiles (map (\x -> basePath </> x) candidateDirectories) "ORDER.$$$"
+    -- Version 10.0.1.1228 uses ORDER.APP again, not sure why they switch back and forth
     cb <- findFiles (map (\x -> basePath </> x) candidateDirectories) "ORDER.APP"
     return $ ca ++ cb
 
