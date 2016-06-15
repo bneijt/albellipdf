@@ -1,29 +1,32 @@
-Met de nieuwe versie van Albelli is er een overstap gemaakt
-van het versleutelen van de bestanden om zo zoveel mogelijk
-het behouden van een PDF voor eigen doeleinden tegen te gaan.
-
-Omdat Albelli de klant geen mogelijkheid geeft om een handige
-backup te maken die niet afhankelijk is van hun software
-is dit stukje software gemaakt om een PDF uit het bestelprocess
-te grijpen.
+Introductie
+-----------
+Zolang Albelli haar klanten niet de mogelijkheid biedt om hun werk
+te backuppen op een Albelli onafhankelijke manier, zoals een PDF,
+zullen we hier plezier hebben met het ontfutselen van die backup.
 
 Technische achtergrond
 ----------------------
-De PDF wordt tijdelijk opgeslagen als `ORDER.$$$` of `ORDER.APP` en met een simpel
-XOR met een enkele byte ge-encrypt. Deze encryptie is door de standaard
-PDF header makkelijk ongedaan te maken (het bestand begint immers met `%PDF`).
+De Albelli software maakt tijdens het bestelprocess een PDF bestand om deze
+vervolgens in een versleuteld zip bestand naar hun website te uploaden.
 
-Tevens gebruikt Albelli een exclusive read lock op het bestand om te zorgen dan andere processen en scripts niet bij het bestand kunnen komen.
+Het doel van dit programma is om voor het PDF bestand tijdens dit bestelprocess er tussenuit te halen.
 
-Daarom is het tegenwoordig van belang om het Albelli process
-halverwegen het bestellen geforceerd te beeindigen.
+Historie
+--------
+Het eerste script staat gepubliceerd in [een blog post](http://bneijt.nl/blog/post/albelli-fotoboeken-als-pdf/).
 
-Allemaal erg kinderachtig en jammer, maar het is niet anders.
+Versie 10.0.0.1189 introduceerde twee technische rariteiten die de werking
+tegen ging:
 
-00100101  00101011 = 00001110  
-01010000  01011110 = 00001110
-01000100  01001010 = 00001110
-01000110  01001000 = .......0
+ - Een exclusive file lock
+ - Een enkele byte XOR versleuteling van de tijdelijke PDF
+
+De eerste is technische onzin omdat het om een tijdelijk bestand gaat
+in een random directory gemaakt door het Albelli programma zelf.
+
+De XOR versleuteling is technisch onzinnig omdat het geen enkele vorm van bescherming biedt
+en dus niets anders is dan een onzinnige verdoezeling die bij programmeer lessen van de middelbare school hoort.
+
+De read lock is het makkelijkst op te lossen door Albelli halverwegen het bestelprocess geforceerd af te sluiten. De versleuteling is kinderachtig en ook makkelijk op te lossen (maar niet in een BATCH script).
 
 
-xor 14 decimal
