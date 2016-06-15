@@ -39,7 +39,7 @@ transcodeStream inputHandle key outputHandle = do
 
 transcodeFile :: FilePath -> FilePath -> Key -> IO ()
 transcodeFile inputPath outputPath key = do
-    print $ inputPath ++ " to " ++ outputPath
+    putStrLn $ inputPath ++ " to " ++ outputPath
     withBinaryFile inputPath ReadMode (\inputHandle ->
             withBinaryFile outputPath WriteMode (transcodeStream inputHandle key)
                 )
@@ -47,16 +47,13 @@ transcodeFile inputPath outputPath key = do
 
 decryptFile :: FilePath -> IO ()
 decryptFile path = do
-    _ <- print ("Decrypting " ++ path)
+    putStrLn ("Decrypting " ++ path)
     let pdfHeader = "%PDF" :: B.ByteString
     firstBytes <- withBinaryFile path ReadMode (\handle -> B.hGet handle (B.length pdfHeader))
     if firstBytes == pdfHeader
-        then do
-            print "Not encrypted, you lucky!"
-            return ()
+        then putStrLn "Not encrypted, you lucky!"
         else do
             --Determine XOR byte
             let key = determineKey firstBytes pdfHeader
-            print ("Found key: " ++ show key)
+            putStrLn ("Found key: " ++ show key)
             transcodeFile path (addExtension (dropExtensions path ++ "_decrypted") "pdf") key
-            return ()

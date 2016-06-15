@@ -9,7 +9,7 @@ te grijpen.
 
 Technische achtergrond
 ----------------------
-De PDF wordt tijdelijk opgeslagen als `ORDER.$$$` en met een simpel
+De PDF wordt tijdelijk opgeslagen als `ORDER.$$$` of `ORDER.APP` en met een simpel
 XOR met een enkele byte ge-encrypt. Deze encryptie is door de standaard
 PDF header makkelijk ongedaan te maken (het bestand begint immers met `%PDF`).
 

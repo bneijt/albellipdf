@@ -15,7 +15,10 @@ import Decrypt
 findOrderFilesBelow :: FilePath -> IO [FilePath]
 findOrderFilesBelow basePath = do
     candidateDirectories <- getDirectoryContents basePath
-    findFiles (map (\x -> basePath </> x) candidateDirectories) "ORDER.$$$"
+    -- Version 10.0.0.1189 uses ORDER.$$$
+    ca <- findFiles (map (\x -> basePath </> x) candidateDirectories) "ORDER.$$$"
+    cb <- findFiles (map (\x -> basePath </> x) candidateDirectories) "ORDER.APP"
+    return $ ca ++ cb
 
 findOrderFiles :: IO [FilePath]
 findOrderFiles = do
@@ -47,14 +50,16 @@ randomOrderPdfName =  do
 findAndKill :: IO()
 findAndKill = do
     hSetBuffering stdout NoBuffering
-    print "Polling for order file..."
+    putStrLn "Polling for order file..."
     orderFilePath <- pollForOrderFile
-    print "Waiting for packaging stage"
+    putStrLn "Waiting for packaging stage"
     waitForAlbFileNextTo orderFilePath
-    print "Found ALB file, killing Albelli"
+    putStrLn "Found ALB file, killing Albelli"
     callCommand "taskkill /f /im apc.exe"
     threadDelay 500
     outputPath <- randomOrderPdfName
     renameFile orderFilePath outputPath
     decryptFile outputPath
+    putStrLn "Pres any key to close"
+    _ <- getLine
     return ()
