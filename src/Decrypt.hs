@@ -16,7 +16,7 @@ type Key = Word8
 determineKey :: B.ByteString -> B.ByteString -> Key
 determineKey currentHeader expectedHeader = if ka == kb && kb == kc
     then ka
-    else error "Could not find single byte key that works"
+    else error "Wel encryptie, maar een nieuwe onbekende vorm"
     where
         ka = xor (B.index currentHeader 0) (B.index expectedHeader 0)
         kb = xor (B.index currentHeader 1) (B.index expectedHeader 1)
@@ -39,21 +39,24 @@ transcodeStream inputHandle key outputHandle = do
 
 transcodeFile :: FilePath -> FilePath -> Key -> IO ()
 transcodeFile inputPath outputPath key = do
-    putStrLn $ inputPath ++ " to " ++ outputPath
+    putStrLn $ inputPath ++ " -> " ++ outputPath
     withBinaryFile inputPath ReadMode (\inputHandle ->
             withBinaryFile outputPath WriteMode (transcodeStream inputHandle key)
                 )
 
 
-decryptFile :: FilePath -> IO ()
+decryptFile :: FilePath -> IO FilePath
 decryptFile path = do
-    putStrLn ("Decrypting " ++ path)
     let pdfHeader = "%PDF" :: B.ByteString
     firstBytes <- withBinaryFile path ReadMode (\handle -> B.hGet handle (B.length pdfHeader))
     if firstBytes == pdfHeader
-        then putStrLn "Not encrypted, you lucky!"
+        then do
+            putStrLn "Mooi, niet versleuteld"
+            return path
         else do
             --Determine XOR byte
             let key = determineKey firstBytes pdfHeader
-            putStrLn ("Found key: " ++ show key)
-            transcodeFile path (addExtension (dropExtensions path ++ "_decrypted") "pdf") key
+            let decryptedFilePath = addExtension (dropExtensions path ++ "_decrypted") "pdf"
+            putStrLn ("Vesleuteld met: " ++ show key)
+            transcodeFile path decryptedFilePath key
+            return decryptedFilePath

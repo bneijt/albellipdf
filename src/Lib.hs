@@ -33,7 +33,7 @@ pollForOrderFile = do
     case length candidateFiles of
         0 -> pollForOrderFile
         1 -> return (head candidateFiles)
-        _ -> error ("Found multiple ORDER.$$$ candidates, please clean up your temporary files: " ++ show candidateFiles)
+        _ -> error ("Meerdere candidaten voor ORDER.$$$ gevonden. Ruim aub zelf deze bestanden op: " ++ show candidateFiles)
 
 waitForAlbFileNextTo :: FilePath -> IO ()
 waitForAlbFileNextTo orderFilePath = do
@@ -51,16 +51,17 @@ randomOrderPdfName =  do
 findAndKill :: IO()
 findAndKill = do
     hSetBuffering stdout NoBuffering
-    putStrLn "Polling for order file..."
+    putStrLn "Wachten op order bestand..."
     orderFilePath <- pollForOrderFile
-    putStrLn "Waiting for packaging stage"
+    putStrLn ("Gevonden: " ++ orderFilePath)
+    putStrLn "Klaar om zodra inpakken begint Albelli te stoppen..."
     waitForAlbFileNextTo orderFilePath
-    putStrLn "Found ALB file, killing Albelli"
+    putStrLn "ALB bestand gevonden, stop nu Albelli"
     callCommand "taskkill /f /im apc.exe"
     threadDelay 500
     outputPath <- randomOrderPdfName
     renameFile orderFilePath outputPath
     decryptFile outputPath
-    putStrLn "Pres any key to close"
+    putStrLn "Druk op enter dit programma te sluiten"
     _ <- getLine
     return ()
