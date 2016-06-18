@@ -1,10 +1,12 @@
 module Main where
 
 import Lib
+import Paths_albellipdf (version)
+import Data.Version (showVersion)
 
 main :: IO ()
 main = do
-    putStrLn " Albelli PDF version 1.0\n\
+    putStrLn (" Albelli PDF version " ++ showVersion version ++ "\n\
         \ Copyright (C) 2016  Bram Neijt <bneijt@gmail.com> \n\
         \  \n\
         \ This program is free software: you can redistribute it and/or modify \n\
@@ -20,6 +22,6 @@ main = do
         \ You should have received a copy of the GNU General Public License \n\
         \ along with this program.  If not, see <http://www.gnu.org/licenses/>. \n\
         \ \n\
-        \ If you agree to all this, press return to continue"
+        \ If you agree to all this, press return to continue")
     _ <- getLine
     findAndKill
